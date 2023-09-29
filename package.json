@@ -15,12 +15,18 @@
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-native": "0.72.5",
-    "react-native-web": "~0.19.6",
-    "systemjs": "^6.14.2",
+    "react-native-web": "^0.19.9",
+    "snack-babel-standalone": "./snack-babel-standalone-3.0.2.tgz",
+    "systemjs": "github:systemjs/systemjs#6.14.2",
+    "systemjs-cjs-extra": "^0.2.0",
     "typescript": "^5.1.3"
   },
   "devDependencies": {
-    "@babel/core": "^7.20.0"
+    "@babel/core": "^7.20.0",
+    "assert": "^2.1.0",
+    "commomjs-lodash": "^0.0.2",
+    "lodash": "^4.17.21",
+    "path": "^0.12.7"
   },
   "private": true
 }

@@ -1,14 +1,4 @@
-// Copied from systemjs/src/extras/global.js
-
-import { systemJSPrototype } from '../system-rn';
-
-/*
- * SystemJS global script loading support
- * Extra for the s.js build only
- * (Included by default in system.js build)
- */
-
-// var systemJSPrototype = global.System.constructor.prototype;
+import { systemJSPrototype } from '../core/system';
 
 // safari unpredictably lists some new globals first or second in object order
 var firstGlobalProp, secondGlobalProp, lastGlobalProp;
@@ -89,8 +79,7 @@ systemJSPrototype.getRegister = function () {
   ];
 };
 
-// var isIE11 = typeof navigator !== 'undefined' && navigator.userAgent.indexOf('Trident') !== -1;
-var isIE11 = false;
+var isIE11 = typeof navigator !== 'undefined' && navigator.userAgent.indexOf('Trident') !== -1;
 
 function shouldSkipProperty(p) {
   return (

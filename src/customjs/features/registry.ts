@@ -1,7 +1,17 @@
-// // Copied from systemjs/src/featyres/registry.js
-
-import { systemJSPrototype, REGISTRY } from '../system-rn';
+import { systemJSPrototype, REGISTRY } from '../core/system';
 import { errMsg } from 'systemjs/src/err-msg';
+
+declare global {
+  namespace SystemJS {
+    interface System {
+      get(id: SystemModuleUrl): SystemModule;
+      set(id: SystemModuleUrl, module: SystemModule): SystemModule;
+      has(id: SystemModuleUrl): boolean;
+      delete(id: SystemModuleUrl): void;
+      entries(): any;
+    }
+  }
+}
 
 var toStringTag = typeof Symbol !== 'undefined' && Symbol.toStringTag;
 
@@ -116,3 +126,10 @@ systemJSPrototype.entries = function () {
 
   return result;
 };
+
+const nextResolve = systemJSPrototype.resolve;
+systemJSPrototype.resolve = function (id, parentId) {
+  const singleton = this.get(id);
+  if (singleton) return id;
+  return nextResolve.call(this, id, parentId);
+}
