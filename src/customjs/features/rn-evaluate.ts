@@ -14,12 +14,9 @@ declare global {
 }
 
 systemJSPrototype.transpile = function (source, url, parentUrl, meta) {
-  meta = meta || this.createContext(url);
   meta.evaluate = meta.evaluate || {};
 
-  if (meta.evaluate.skipTranspile) {
-    return source;
-  }
+  if (meta.evaluate.skipTranspile) return source;
 
   console.time(`Transpile: ${url}`);
   const result = transformSync(source, {
@@ -37,6 +34,7 @@ systemJSPrototype.transpile = function (source, url, parentUrl, meta) {
   console.timeEnd(`Transpile: ${url}`);
 
   meta.evaluate.sourceMap = result.map;
+
   return result.code;
 }
 

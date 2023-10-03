@@ -79,7 +79,8 @@ systemJSPrototype.getRegister = function () {
   ];
 };
 
-var isIE11 = typeof navigator !== 'undefined' && navigator.userAgent.indexOf('Trident') !== -1;
+// var isIE11 = typeof navigator !== 'undefined' && navigator.userAgent.indexOf('Trident') !== -1;
+var isIE11 = false;
 
 function shouldSkipProperty(p) {
   return (

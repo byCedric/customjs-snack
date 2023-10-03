@@ -136,10 +136,12 @@ ${source}
   systemJSPrototype.evaluate = function (source, url, parentUrl, options) {
     // const isJavascriptFile = JAVASCRIPT_REGEX.test(url);
 
-    if (!isCJSFormat(source)) {
+    if (!(options.format === 'cjs' || isCJSFormat(source))) {
       console.log('[commonjs] Skipping, a commonjs file');
       return nextEvaluate.call(this, source, url, source, options);
     }
+
+    console.log('[commonjs] Evaluating', url);
 
     const exports = {};
     const module = { exports };

@@ -16,7 +16,7 @@ declare global {
 }
 
 systemJSPrototype.resolve = function (url, parentUrl) {
-  throw new Error('asd');
+  throw new Error('Resolve not implemented');
   // const result = resolveIfNotPlainOrUrl(url, parentUrl) || throwUnresolved(url, parentUrl);
   // console.log('[resolve]', url, '->', result);
   // return result;
