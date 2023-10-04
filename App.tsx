@@ -1,60 +1,96 @@
 import { StatusBar } from 'expo-status-bar';
-import { Button, Platform, StyleSheet, Text, View } from 'react-native';
+import { Button, Platform, StyleSheet, View } from 'react-native';
 
 import { System } from './src/customjs';
-import { ReactElement, createElement, useState } from 'react';
+import { ReactElement, useState } from 'react';
 
-// Pipe core libraries through SystemJS
-System.set('react', require('react')); // Required because we are rendering in the App's React instance (can't have multiple React instances)
-// System.set('react/jsx-runtime', require('react/jsx-runtime'));
-// System.set("react-dom/client", require("react-dom/client"));
-
-if (Platform.OS === 'ios') {
-  System.set('react-native', require('react-native'));
-}
-
-// System.set('react-native', Platform.select({
-//   // default: require('react-native'),
-//   web: require('react-native-web'),
-// }))
+// Adding this to avoid having to fetch from Metro or anything else
+// Just reuse the exact same instance from the app's bundle
+System.alias('react', require('react'));
+System.alias('react/jsx-runtime', require('react/jsx-runtime'));
+System.alias('react-native', Platform.select({
+  default: require('react-native'),
+  web: require('react-native-web'),
+}));
 
 async function setFiles() {
   System.addFiles({
-    './web-app/component.tsx': `
-      import { Text } from 'react-native';
-      // import Debug from 'debug';
+    './index.js': `export * from './app.js';
+export { default } from './app.js';
+`,
+    './app.js': `import { Text, View, StyleSheet } from 'react-native';
 
-      // Debug.enable('*');
+// Test top-level await, this forces "execute" to be an async function
+await Promise.resolve();
 
-      // const debug = Debug.debug('web-app');
+function App() {
+  return (
+    <View>
+      <Text style={styles.paragraph}>
+        Hello from <Text style={{ color: 'red' }}>ESM</Text>
+      </Text>
+    </View>
+  );
+}
 
-      export function App() {
-        // debug('Rendering...');
-        return <Text>Jey</Text>;
-      }
-    `,
-    './web-app.tsx': `
-      export { App as default } from './web-app/component.tsx';
-    `,
+export default App;
+export const styles = StyleSheet.create({
+  paragraph: {
+    fontSize: 18,
+  },
+});
 
-    './common-test.js': `
-      module.exports = require('./empty-export.js');
-    `,
+export const otherValue = 'alsotest';
+`,
 
-    // './index.js': `export { App } from './app.js';`,
-    // './app.js': `
-    //   import { Text } from 'react-native';
-
-    //   export function App() {
-    //     return <Text>hello world</Text>;
-    //   }
+    // './other.js': `
+    //   System.register('./other.js', [], function (_export, _context) {
+    //     return {
+    //       setters: [],
+    //       execute() {
+    //         console.log('Other is being executed');
+    //         _export('value', 'Hello World');
+    //       }
+    //     }
+    //   });
     // `,
 
-    // './world.js': `console.log('world!');`,
-    // './hello.js': `
-    //   console.log('hello!');
-    //   require('./world.js');
+    // './index.js': `
+    //   System.register('./index.js', [], function (_export, _context) {
+    //     return {
+    //       setters: [],
+    //       execute() {
+    //         console.log('Index is being executed');
+
+    //         console.log('REQUIRE', typeof require);
+
+    //         _export('default', () => {
+    //           return System.import('./other.js')
+    //             .then((other) => other.value);
+    //         });
+    //         _export('otherValue', 'alsotest');
+    //       }
+    //     }
+    //   });
     // `,
+
+    './without-transpile.js': `
+      System.register('./index.js', [], function (_export, _context) {
+        return {
+          setters: [],
+          execute() {
+            async function test() {
+              return 'Hello world';
+            }
+
+            const otherValue = 'alsotest';
+
+            _export('default', test);
+            _export('otherValue', otherValue);
+          }
+        }
+      });
+    `,
   });
 }
 
@@ -64,20 +100,13 @@ export default function App() {
   async function onLoadSnack() {
     setFiles();
 
-    // return console.log('Loaded', await System.import('./common-test.js'))
-
     console.time('Loaded app');
-    const result = await System.import('./web-app.tsx');
+    const result = await System.import('./index.js');
     console.timeEnd('Loaded app');
+
     if (result) {
-      console.log('RESULT', result);
-      let App = result;
-      // TODO: replace with babel interop default require
-      while (typeof App.default !== 'undefined') {
-        App = App.default;
-      }
-      console.log('App:', App);
-      setSnack(createElement(App));
+      console.log(result);
+      setSnack(result.default);
     }
   }
 

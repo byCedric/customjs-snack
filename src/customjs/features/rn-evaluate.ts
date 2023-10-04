@@ -1,4 +1,4 @@
-import { transformSync } from 'snack-babel-standalone/build/runtime';
+import { transformSync } from '@expo-system/babel';
 
 import { systemJSPrototype } from '../core/system';
 
@@ -22,28 +22,28 @@ systemJSPrototype.transpile = function (source, url, parentUrl, meta) {
   const result = transformSync(source, {
     plugins: [
       ['@babel/plugin-transform-react-jsx', { runtime: 'automatic' }],
-      ['@babel/plugin-transform-modules-commonjs'],
-      // ['@babel/plugin-transform-modules-systemjs', { systemGlobal: 'System' }],
+      ['@babel/plugin-transform-modules-systemjs', { systemGlobal: 'System' }],
     ],
-    filename: url,
+    filename: `snack://${url}`,
     babelrc: false,
     configFile: false,
-    sourceMaps: true,
-    sourceFileName: url,
+    sourceMaps: 'inline',
+    sourceFileName: `snack://${url}`,
   });
-  console.timeEnd(`Transpile: ${url}`);
 
-  meta.evaluate.sourceMap = result.map;
+  console.timeEnd(`Transpile: ${url}`);
 
   return result.code;
 }
 
 systemJSPrototype.evaluate = function (source, url, parentUrl, meta) {
-  if (global.globalEvalWithSourceUrl) {
-    global.globalEvalWithSourceUrl(source, url);
-  }
+  console.log('[eval]', url, source);
 
-  (0, eval)(source);
+  if (global.globalEvalWithSourceUrl) {
+    global.globalEvalWithSourceUrl(source, `snack://${url}`);
+  } else {
+    (0, eval)(source);
+  }
 
   return this.getRegister(url);
 }

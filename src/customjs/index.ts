@@ -16,7 +16,6 @@ import './features/registry';
 import './features/globals';
 import './features/rn-evaluate';
 import './features/snack-files';
-import './features/metro-resolve';
+// import './features/metro-resolve';
 // import './features/bun-resolve'; // DO NOT USE THIS, ITS NOT GOOD
-import './features/commonjs';
-
+// import './features/commonjs';

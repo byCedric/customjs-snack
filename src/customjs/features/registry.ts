@@ -9,6 +9,8 @@ declare global {
       has(id: SystemModuleUrl): boolean;
       delete(id: SystemModuleUrl): void;
       entries(): any;
+
+      alias(id: SystemModuleUrl, module: SystemModule);
     }
   }
 }
@@ -23,6 +25,15 @@ systemJSPrototype.get = function (id) {
     return load.n;
   }
 };
+
+systemJSPrototype.alias = function (id, module) {
+  // Force the module to be detected as already instantiated module
+  if (toStringTag) {
+    Object.defineProperty(module, toStringTag, { value: 'Module' });
+  }
+
+  return this.set(id, module);
+}
 
 systemJSPrototype.set = function (id, module) {
   if (!process.env.SYSTEM_PRODUCTION) {

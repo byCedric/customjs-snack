@@ -137,7 +137,7 @@ ${source}
     // const isJavascriptFile = JAVASCRIPT_REGEX.test(url);
 
     if (!(options.format === 'cjs' || isCJSFormat(source))) {
-      console.log('[commonjs] Skipping, a commonjs file');
+      console.log('[commonjs] Skipping, not a commonjs file');
       return nextEvaluate.call(this, source, url, source, options);
     }
 

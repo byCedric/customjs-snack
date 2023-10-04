@@ -86,7 +86,6 @@ var systemJSPrototype = (SystemJS as unknown as typeof global.SystemJS.System).p
 systemJSPrototype.import = function (id, parentUrl, meta) {
   var loader = this;
   parentUrl && typeof parentUrl === 'object' && ((meta = parentUrl), (parentUrl = undefined));
-  meta = meta || {};
   return Promise.resolve(loader.prepareImport())
     .then(function () {
       return loader.resolve(id, parentUrl, meta);
@@ -135,6 +134,8 @@ systemJSPrototype.getRegister = function () {
 export function getOrCreateLoad(loader, id, firstParentUrl, meta) {
   var load = loader[REGISTRY][id];
   if (load) return load;
+
+  meta = meta || {};
 
   var importerSetters = [];
   var ns = Object.create(null);

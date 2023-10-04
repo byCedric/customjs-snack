@@ -29,7 +29,11 @@ systemJSPrototype.resolve = function (url, parentUrl) {
 
 const nextShouldFetch = systemJSPrototype.shouldFetch;
 systemJSPrototype.shouldFetch = function (url) {
-  return this.files.has(url);
+  if (this.files.has(url)) {
+    return true;
+  }
+
+  return nextShouldFetch.call(this, url);
 };
 
 const nextFetch = systemJSPrototype.fetch;
